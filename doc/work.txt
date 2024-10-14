@@ -1,0 +1,10 @@
+First manual login for skipping 2FA authentication
+
+allocate proxy for account.
+
+upload
+  - https://fansly.com/creator/vault
+  folder = album
+  
+
+
