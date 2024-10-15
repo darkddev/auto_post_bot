@@ -1,7 +1,8 @@
+import { ApiError } from "../services/base-service";
 import { BotConfig } from "../types/interface";
 
 export class Logger {
-  protected config:BotConfig;
+  protected config: BotConfig;
 
   constructor(config: BotConfig) {
     this.config = config
@@ -16,7 +17,11 @@ export class Logger {
   }
 
   public async error(error: Error) {
-    console.error(`[${this.config.platform} BOT - ${this.config.alias}] : ${error.message}`)
+    if (error instanceof ApiError) {
+      console.error(`[${this.config.platform} BOT - ${this.config.alias}] : [ApiError - ${error.path}] : ${error.message}`)
+    } else {
+      console.error(`[${this.config.platform} BOT - ${this.config.alias}] : [InternalError] : ${error.message}`)
+    }
   }
 
 }
