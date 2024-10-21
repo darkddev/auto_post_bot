@@ -8,7 +8,7 @@ dotenv.config();
 
 program.option('-d, --debug').option('-f, --force');
 program.parse();
-
+const opts = program.opts();
 if (program.args.length < 2) {
   console.log("[BOT] : invalid command");
   process.exit();
@@ -22,8 +22,8 @@ let config: BotConfig = {
   captcha_key: process.env.CAPTCHA_KEY || "",
   server_root: process.env.SERVER_ROOT || "http://localhost:5000",
   console_log: process.env.CONSOLE_LOG == "true",
-  debug: false,
-  force: true,
+  debug: opts.debug,
+  force: opts.force,
 };
 
 
