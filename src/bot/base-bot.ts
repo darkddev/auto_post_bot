@@ -34,6 +34,7 @@ export abstract class BaseBot {
       await this.initService();
       await this.initAccount();
       await this.initBrowser();
+      await this.initProxy();
       await this.service.createHistory("bot started");
     } catch (error: any) {
       if (this.logger)
@@ -61,10 +62,22 @@ export abstract class BaseBot {
     await this.getAccount();
   };
 
+  protected async initProxy(): Promise<void> {
+    try {
+      await this.browser.checkProxy();
+      await this.browser.home();
+      await this.logger.info(`select proxy(${this.proxy.server})`)
+    } catch (error) {
+      await this.logger.warn(`invalid proxy(${this.proxy.server})`)
+      await this.service.blockProxy();
+      throw error;
+    }
+  }
+
   async start(): Promise<void> {
     try {
       // open home page
-      await this.browser.home()
+      // await this.browser.home()
       await this.browser.afterHome();
       await this.service.createHistory("open home page");
       await this.browser.login(this.settings);

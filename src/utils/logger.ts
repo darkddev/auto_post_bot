@@ -24,9 +24,10 @@ export class Logger {
   public async error(error: Error) {
     if (this.config.console_log) {
       if (error instanceof BotError) {
-        console.error(`[${this.config.platform} BOT - ${this.config.alias}] : [BotError - ${error.reason.function}] : ${error.message}`);
+        console.error(`[${this.config.platform} BOT - ${this.config.alias}] : [BotError] : ${error.message}`);
+        console.error(error.reason);
       } else if (error instanceof ApiError) {
-        console.error(`[${this.config.platform} BOT - ${this.config.alias}] : [ApiError - ${error.path}] : ${error.message}`)
+        console.error(`[${this.config.platform} BOT - ${this.config.alias}] : [ApiError] : ${error.message}`);
       } else {
         console.error(`[${this.config.platform} BOT - ${this.config.alias}] : [InternalError] : ${error.message}`)
       }

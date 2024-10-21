@@ -31,7 +31,6 @@ export abstract class BaseBrowser {
     this.context = await this.browser.newContext({ serviceWorkers: "block" });
     this.page = await this.context.newPage();
     await this.setFilter();
-    await this.checkProxy()
     this.logger.info("init browser success");
   }
 
@@ -40,7 +39,7 @@ export abstract class BaseBrowser {
     await this.context.route(/https:\/\/www\.google-analytics\.com\/.*/, route => route.abort());
   }
 
-  private async checkProxy(): Promise<void> {
+  public async checkProxy(): Promise<void> {
     try {
       await this.page.goto("https://www.google.com", { waitUntil: "domcontentloaded" });
     } catch (error: any) {

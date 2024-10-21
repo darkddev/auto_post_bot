@@ -49,7 +49,6 @@ export class FanslyBrowser extends BaseBrowser {
       await this.page.locator("input[name='username']").first().fill(setting.email);
       await this.page.locator("input[name='password']").first().fill(setting.password);
       await this.page.waitForTimeout(1000);
-      console.log(setting.device, setting.email, setting.password);
       // prepare wait reponse
       const loginResponse = this.page.waitForResponse(response => {
         return response.url() === "https://apiv3.fansly.com/api/v1/login?ngsw-bypass=true" && response.request().method() === "POST"
@@ -332,8 +331,8 @@ export class FanslyBrowser extends BaseBrowser {
       const data = await resp.json();
       if (!data.success)
         throw new BotError("get posts failed", {
-          function: "FanslyBrowser::getPosts",
-          path: "https://apiv3.fansly.com/api/v1/timeline/home?before=0&after=0&mode=0&ngsw-bypass=true",
+          where: "FanslyBrowser::getPosts",
+          url: "https://apiv3.fansly.com/api/v1/timeline/home?before=0&after=0&mode=0&ngsw-bypass=true",
           response: data,
         });
       return data.response;
@@ -342,9 +341,10 @@ export class FanslyBrowser extends BaseBrowser {
         throw error;
       else
         throw new BotError("get posts failed", {
-          function: "FanslyBrowser::getPosts",
-          path: "https://apiv3.fansly.com/api/v1/timeline/home?before=0&after=0&mode=0&ngsw-bypass=true",
-          error: error,
+          where: "FanslyBrowser::getPosts",
+          url: "https://apiv3.fansly.com/api/v1/timeline/home?before=0&after=0&mode=0&ngsw-bypass=true",
+          error: error.message,
+          stack: error.stack,
         })
     }
   }

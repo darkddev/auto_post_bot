@@ -24,16 +24,18 @@ export class FanslyBot extends BaseBot {
   protected async initAccount(): Promise<void> {
     await super.initAccount();
     // check account proxy
-    const proxy = this.parseProxy(this.settings.proxy || "cb3ac8e713:zxHGsQ21@163.5.199.154:4444")
+    const proxyAddr = await this.service.pickProxy();
+    // const proxy = this.parseProxy("cb3ac8e713:zxHGsQ21@163.5.199.154:4444");
+    const proxy = this.parseProxy(proxyAddr);
     if (!proxy) {
-      throw new BotError("no proxy", {
+      throw new BotError("invalid proxy", {
         where: "FanslyBot::initAccount",
         error: "there is no proxy for the account"
       });
     }
     this.proxy = proxy;
     // check device id
-    this.settings.device = "703203352300761088";
+    // this.settings.device = "703203352300761088";
     if (!this.settings.device) {
       throw new BotError("no device id", {
         where: "FanslyBot::initAccount",

@@ -38,6 +38,33 @@ export abstract class BaseApiService {
     }
   }
 
+  public async pickProxy(): Promise<string> {
+    try {
+      const { proxy } = await this.getRequest(`/proxy`);
+      return proxy;
+    } catch (error: any) {
+      throw new BotError("pick proxy failed", {
+        where: "BaseService::pickProxy",
+        path: '/proxy',
+        error: error.message,
+        stack: error.stack,
+      });
+    }
+  }
+
+  public async blockProxy(): Promise<void> {
+    try {
+      await this.putRequest(`/proxy`);
+    } catch (error: any) {
+      throw new BotError("block proxy failed", {
+        where: "BaseService::blockProxy",
+        path: '/proxy',
+        error: error.message,
+        stack: error.stack,
+      })
+    }
+  }
+
   public async getAccountSettings(): Promise<AccountSettings> {
     try {
       const { account } = await this.getRequest(`/account`);
