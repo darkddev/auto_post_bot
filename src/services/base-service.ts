@@ -1,6 +1,7 @@
 import axios from "axios";
 import { AccountSettings, BotConfig } from "../types/interface";
 import { Logger } from "../utils/logger";
+import { BotError } from "../bot/base-bot";
 
 export class ApiError extends Error {
   public path: string;
@@ -37,13 +38,66 @@ export abstract class BaseApiService {
     }
   }
 
-  public async getAccountSettings(): Promise<AccountSettings | undefined> {
+  public async getAccountSettings(): Promise<AccountSettings> {
     try {
       const { account } = await this.getRequest(`/account`);
       return account;
     } catch (error: any) {
-      await this.logger.error(error);
-      return undefined;
+      throw new BotError("invalid account", {
+        where: "BaseService::getAccountSettings",
+        path: '/account',
+        error: error.message,
+        stack: error.stack,
+      })
+    }
+  }
+
+  public async updateContents(): Promise<void> {
+    try {
+      const { count } = await this.postRequest(`/account`, { subject: "update_contents" });
+      return count;
+    } catch (error) {
+      throw new BotError("update contents failed", {
+        function: "BaseService::updateContents",
+        path: '/account',
+        error: error,
+      })
+    }
+  }
+
+  public async updateContentMedia(contentIndex: number, uuid: string): Promise<void> {
+    try {
+      await this.postRequest(`/account`, { subject: 'content_media', id: contentIndex, uuid });
+    } catch (error) {
+      throw new BotError("updata content failed", {
+        function: "BaseService::updateContent",
+        path: '/account',
+        error: error,
+      });
+    }
+  }
+
+  public async updatePostSetting(postIndex: number): Promise<void> {
+    try {
+      await this.postRequest(`/account`, { subject: 'post_setting', id: postIndex });
+    } catch (error) {
+      throw new BotError("update post setting failed", {
+        function: "BaseService::updatePostSetting",
+        path: '/account',
+        error: error,
+      });
+    }
+  }
+
+  public async createHistory(action: string): Promise<void> {
+    try {
+      await this.postRequest(`/history`, { action });
+    } catch (error) {
+      throw new BotError("create history failed", {
+        function: "BaseService::createHistory",
+        path: '/history',
+        error: error,
+      });
     }
   }
 
@@ -60,7 +114,6 @@ export abstract class BaseApiService {
         throw new ApiError(message, path);
       return payload;
     } catch (error: any) {
-      console.error(error)
       if (error instanceof ApiError) {
         throw error;
       } else if (error.response?.status === 401) {
@@ -87,7 +140,6 @@ export abstract class BaseApiService {
         throw new ApiError(message, path);
       return payload;
     } catch (error: any) {
-      console.error(error)
       if (error instanceof ApiError) {
         throw error;
       } else if (error.response?.status === 401) {
@@ -113,7 +165,6 @@ export abstract class BaseApiService {
         throw new ApiError(message, path);
       return payload;
     } catch (error: any) {
-      console.error(error)
       if (error instanceof ApiError) {
         throw error;
       } else if (error.response?.status === 401) {
@@ -140,7 +191,6 @@ export abstract class BaseApiService {
         throw new ApiError(message, path);
       return payload;
     } catch (error: any) {
-      console.error(error)
       if (error instanceof ApiError) {
         throw error;
       } else if (error.response?.status === 401) {
@@ -152,6 +202,5 @@ export abstract class BaseApiService {
       }
     }
   }
-
 }
 

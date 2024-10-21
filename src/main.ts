@@ -18,12 +18,14 @@ let config: BotConfig = {
   platform: program.args[0],
   alias: program.args[1],
   schedule_interval: parseInt(process.env.SCHEDULE_INTERVAL || "30000"),
-  graylog_host: process.env.GRAYLOG_HOST || "100.115.196.30",
+  graylog_host: process.env.GRAYLOG_HOST,
   captcha_key: process.env.CAPTCHA_KEY || "",
   server_root: process.env.SERVER_ROOT || "http://localhost:5000",
-  debug: true,
+  console_log: process.env.CONSOLE_LOG == "true",
+  debug: false,
   force: true,
 };
+
 
 (async () => {
   let bot: BaseBot
@@ -35,9 +37,6 @@ let config: BotConfig = {
       console.log("[BOT] : platform not found");
       process.exit()
   }
-  if (!await bot.init()) {
-    console.log("[BOT] : initialization failed");
-    process.exit();
-  }
+  await bot.init()
   await bot.start();
 })();

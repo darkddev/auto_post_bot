@@ -1,3 +1,4 @@
+import { BotError } from "../bot/base-bot";
 import { ApiError } from "../services/base-service";
 import { BotConfig } from "../types/interface";
 
@@ -9,19 +10,26 @@ export class Logger {
   }
 
   public async info(message: string) {
-    console.log(`[${this.config.platform} BOT - ${this.config.alias}] : ${message}`)
-  }
-
-  public async warn(message: string) {
-    console.warn(`[${this.config.platform} BOT - ${this.config.alias}] : ${message}`)
-  }
-
-  public async error(error: Error) {
-    if (error instanceof ApiError) {
-      console.error(`[${this.config.platform} BOT - ${this.config.alias}] : [ApiError - ${error.path}] : ${error.message}`)
-    } else {
-      console.error(`[${this.config.platform} BOT - ${this.config.alias}] : [InternalError] : ${error.message}`)
+    if (this.config.console_log) {
+      console.log(`[${this.config.platform} BOT - ${this.config.alias}] : ${message}`)
     }
   }
 
+  public async warn(message: string) {
+    if (this.config.console_log) {
+      console.warn(`[${this.config.platform} BOT - ${this.config.alias}] : ${message}`)
+    }
+  }
+
+  public async error(error: Error) {
+    if (this.config.console_log) {
+      if (error instanceof BotError) {
+        console.error(`[${this.config.platform} BOT - ${this.config.alias}] : [BotError - ${error.reason.function}] : ${error.message}`);
+      } else if (error instanceof ApiError) {
+        console.error(`[${this.config.platform} BOT - ${this.config.alias}] : [ApiError - ${error.path}] : ${error.message}`)
+      } else {
+        console.error(`[${this.config.platform} BOT - ${this.config.alias}] : [InternalError] : ${error.message}`)
+      }
+    }
+  }
 }
